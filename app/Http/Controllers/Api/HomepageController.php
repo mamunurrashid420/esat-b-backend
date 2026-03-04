@@ -10,6 +10,7 @@ use App\Http\Resources\Api\JobResource;
 use App\Http\Resources\Api\NewsResource;
 use App\Http\Resources\Api\NoticeResource;
 use App\Models\AboutSection;
+use App\Models\CommunitySection;
 use App\Models\Event;
 use App\Models\HealthSection;
 use App\Models\HeroSlide;
@@ -37,6 +38,7 @@ class HomepageController extends Controller
         $heroSlides = $this->getHeroSlides();
         $aboutSection = $this->getAboutSection();
         $healthSection = $this->getHealthSection();
+        $communitySection = $this->getCommunitySection();
         $jobs = $this->getJobs();
         $news = $this->getNews();
         $stats = $this->getStats();
@@ -48,6 +50,7 @@ class HomepageController extends Controller
             'slider_slides' => ['data' => HeroSlideResource::collection($heroSlides)],
             'about_section' => $aboutSection,
             'health_section' => $healthSection,
+            'community_section' => $communitySection,
             'jobs' => ['data' => JobResource::collection($jobs)],
             'news' => ['data' => NewsResource::collection($news)],
             'stats' => $stats,
@@ -134,6 +137,20 @@ class HomepageController extends Controller
                 : null,
             'overlapping_image' => $row && $row->overlapping_image
                 ? $base.'/storage/'.ltrim($row->overlapping_image, '/')
+                : null,
+        ];
+    }
+
+    /**
+     * @return array{image: string|null}
+     */
+    private function getCommunitySection(): array
+    {
+        $row = CommunitySection::query()->first();
+        $base = rtrim(config('app.url') ?? request()->getSchemeAndHttpHost(), '/');
+        return [
+            'image' => $row && $row->image
+                ? $base.'/storage/'.ltrim($row->image, '/')
                 : null,
         ];
     }
