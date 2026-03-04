@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\EventListResource;
 use App\Http\Resources\Api\GalleryPhotoResource;
+use App\Http\Resources\Api\HeroSlideResource;
 use App\Http\Resources\Api\JobResource;
 use App\Http\Resources\Api\NewsResource;
 use App\Http\Resources\Api\NoticeResource;
 use App\Models\Event;
+use App\Models\HeroSlide;
 use App\Models\EventPhoto;
 use App\Models\GalleryPhoto;
 use App\Models\Job;
@@ -29,6 +31,7 @@ class HomepageController extends Controller
         $notices = $this->getNotices($request);
         $events = $this->getUpcomingEvents();
         $galleryPhotos = $this->getGalleryPhotos();
+        $heroSlides = $this->getHeroSlides();
         $jobs = $this->getJobs();
         $news = $this->getNews();
         $stats = $this->getStats();
@@ -37,6 +40,7 @@ class HomepageController extends Controller
             'notices' => ['data' => NoticeResource::collection($notices)],
             'events' => ['data' => EventListResource::collection($events)],
             'gallery_photos' => ['data' => GalleryPhotoResource::collection($galleryPhotos)],
+            'slider_slides' => ['data' => HeroSlideResource::collection($heroSlides)],
             'jobs' => ['data' => JobResource::collection($jobs)],
             'news' => ['data' => NewsResource::collection($news)],
             'stats' => $stats,
@@ -76,6 +80,18 @@ class HomepageController extends Controller
     private function getGalleryPhotos(): \Illuminate\Database\Eloquent\Collection
     {
         return GalleryPhoto::query()
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get();
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection<int, \App\Models\HeroSlide>
+     */
+    private function getHeroSlides(): \Illuminate\Database\Eloquent\Collection
+    {
+        return HeroSlide::query()
+            ->where('is_active', true)
             ->orderBy('sort_order')
             ->orderBy('id')
             ->get();

@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\ConveningCommitteeMemberController;
 use App\Http\Controllers\Api\DownloadController;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\GalleryPhotoController;
+use App\Http\Controllers\Api\HeroSlideController;
 use App\Http\Controllers\Api\HomepageController;
 use App\Http\Controllers\Api\HonorBoardEntryController;
 use App\Http\Controllers\Api\JobController;
@@ -164,6 +165,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/gallery-photos/{galleryPhoto}', [GalleryPhotoController::class, 'show']);
     Route::put('/gallery-photos/{galleryPhoto}', [GalleryPhotoController::class, 'update']);
     Route::delete('/gallery-photos/{galleryPhoto}', [GalleryPhotoController::class, 'destroy']);
+
+    // Homepage hero slider (super admin only)
+    Route::get('/hero-slides', [HeroSlideController::class, 'index']);
+    Route::post('/hero-slides', [HeroSlideController::class, 'store']);
+    Route::get('/hero-slides/{heroSlide}', [HeroSlideController::class, 'show']);
+    Route::put('/hero-slides/{heroSlide}', [HeroSlideController::class, 'update']);
+    Route::delete('/hero-slides/{heroSlide}', [HeroSlideController::class, 'destroy']);
 
     // Notices (super admin only)
     Route::post('/notices', [NoticeController::class, 'store']);
