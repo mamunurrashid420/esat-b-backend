@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AdvisoryBodyMemberController;
+use App\Http\Controllers\Api\AboutSectionController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BatchRepresentativeController;
 use App\Http\Controllers\Api\ConveningCommitteeMemberController;
@@ -165,6 +166,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/gallery-photos/{galleryPhoto}', [GalleryPhotoController::class, 'show']);
     Route::put('/gallery-photos/{galleryPhoto}', [GalleryPhotoController::class, 'update']);
     Route::delete('/gallery-photos/{galleryPhoto}', [GalleryPhotoController::class, 'destroy']);
+
+    // About section (super admin only)
+    Route::get('/about-section', [AboutSectionController::class, 'show']);
+    Route::put('/about-section', [AboutSectionController::class, 'update']);
 
     // Homepage hero slider (super admin only)
     Route::get('/hero-slides', [HeroSlideController::class, 'index']);

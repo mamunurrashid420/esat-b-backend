@@ -9,6 +9,7 @@ use App\Http\Resources\Api\HeroSlideResource;
 use App\Http\Resources\Api\JobResource;
 use App\Http\Resources\Api\NewsResource;
 use App\Http\Resources\Api\NoticeResource;
+use App\Models\AboutSection;
 use App\Models\Event;
 use App\Models\HeroSlide;
 use App\Models\EventPhoto;
@@ -20,6 +21,7 @@ use App\Models\User;
 use App\UserRole;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class HomepageController extends Controller
 {
@@ -32,6 +34,7 @@ class HomepageController extends Controller
         $events = $this->getUpcomingEvents();
         $galleryPhotos = $this->getGalleryPhotos();
         $heroSlides = $this->getHeroSlides();
+        $aboutSection = $this->getAboutSection();
         $jobs = $this->getJobs();
         $news = $this->getNews();
         $stats = $this->getStats();
@@ -41,6 +44,7 @@ class HomepageController extends Controller
             'events' => ['data' => EventListResource::collection($events)],
             'gallery_photos' => ['data' => GalleryPhotoResource::collection($galleryPhotos)],
             'slider_slides' => ['data' => HeroSlideResource::collection($heroSlides)],
+            'about_section' => $aboutSection,
             'jobs' => ['data' => JobResource::collection($jobs)],
             'news' => ['data' => NewsResource::collection($news)],
             'stats' => $stats,
@@ -95,6 +99,22 @@ class HomepageController extends Controller
             ->orderBy('sort_order')
             ->orderBy('id')
             ->get();
+    }
+
+    /**
+     * @return array{main_image: string|null, overlapping_image: string|null}
+     */
+    private function getAboutSection(): array
+    {
+        $row = AboutSection::query()->first();
+        return [
+            'main_image' => $row && $row->main_image
+                ? Storage::disk('public')->url($row->main_image)
+                : null,
+            'overlapping_image' => $row && $row->overlapping_image
+                ? Storage::disk('public')->url($row->overlapping_image)
+                : null,
+        ];
     }
 
     /**
