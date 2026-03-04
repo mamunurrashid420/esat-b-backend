@@ -107,12 +107,13 @@ class HomepageController extends Controller
     private function getAboutSection(): array
     {
         $row = AboutSection::query()->first();
+        $base = rtrim(config('app.url') ?? request()->getSchemeAndHttpHost(), '/');
         return [
             'main_image' => $row && $row->main_image
-                ? Storage::disk('public')->url($row->main_image)
+                ? $base.'/storage/'.ltrim($row->main_image, '/')
                 : null,
             'overlapping_image' => $row && $row->overlapping_image
-                ? Storage::disk('public')->url($row->overlapping_image)
+                ? $base.'/storage/'.ltrim($row->overlapping_image, '/')
                 : null,
         ];
     }
