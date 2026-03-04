@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AdvisoryBodyMemberController;
 use App\Http\Controllers\Api\AboutSectionController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\AuthPageSectionController;
 use App\Http\Controllers\Api\BatchRepresentativeController;
 use App\Http\Controllers\Api\ConveningCommitteeMemberController;
 use App\Http\Controllers\Api\DownloadController;
@@ -66,6 +67,9 @@ Route::get('/downloads', [DownloadController::class, 'index']);
 
 // Homepage: single combined endpoint for all public homepage data
 Route::get('/homepage', [HomepageController::class, 'index'])->middleware(OptionalSanctumAuth::class);
+
+// Auth page background image (public – for login/registration pages)
+Route::get('/auth-page', [AuthPageSectionController::class, 'showPublic']);
 
 // Homepage stats (public)
 Route::get('/stats', [StatsController::class, 'index']);
@@ -181,6 +185,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // Community section image (super admin only)
     Route::get('/community-section', [CommunitySectionController::class, 'show']);
     Route::post('/community-section', [CommunitySectionController::class, 'update']);
+
+    // Auth page background image (super admin only)
+    Route::post('/auth-page', [AuthPageSectionController::class, 'update']);
 
     // Homepage hero slider (super admin only)
     Route::get('/hero-slides', [HeroSlideController::class, 'index']);
