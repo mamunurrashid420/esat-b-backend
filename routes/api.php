@@ -167,9 +167,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/gallery-photos/{galleryPhoto}', [GalleryPhotoController::class, 'update']);
     Route::delete('/gallery-photos/{galleryPhoto}', [GalleryPhotoController::class, 'destroy']);
 
-    // About section (super admin only)
+    // About section (super admin only). POST used for update so file upload works (PHP does not populate $_FILES on PUT).
     Route::get('/about-section', [AboutSectionController::class, 'show']);
     Route::put('/about-section', [AboutSectionController::class, 'update']);
+    Route::post('/about-section', [AboutSectionController::class, 'update']);
 
     // Homepage hero slider (super admin only)
     Route::get('/hero-slides', [HeroSlideController::class, 'index']);
