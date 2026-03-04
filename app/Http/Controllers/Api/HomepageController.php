@@ -11,6 +11,7 @@ use App\Http\Resources\Api\NewsResource;
 use App\Http\Resources\Api\NoticeResource;
 use App\Models\AboutSection;
 use App\Models\Event;
+use App\Models\HealthSection;
 use App\Models\HeroSlide;
 use App\Models\EventPhoto;
 use App\Models\GalleryPhoto;
@@ -35,6 +36,7 @@ class HomepageController extends Controller
         $galleryPhotos = $this->getGalleryPhotos();
         $heroSlides = $this->getHeroSlides();
         $aboutSection = $this->getAboutSection();
+        $healthSection = $this->getHealthSection();
         $jobs = $this->getJobs();
         $news = $this->getNews();
         $stats = $this->getStats();
@@ -45,6 +47,7 @@ class HomepageController extends Controller
             'gallery_photos' => ['data' => GalleryPhotoResource::collection($galleryPhotos)],
             'slider_slides' => ['data' => HeroSlideResource::collection($heroSlides)],
             'about_section' => $aboutSection,
+            'health_section' => $healthSection,
             'jobs' => ['data' => JobResource::collection($jobs)],
             'news' => ['data' => NewsResource::collection($news)],
             'stats' => $stats,
@@ -107,6 +110,23 @@ class HomepageController extends Controller
     private function getAboutSection(): array
     {
         $row = AboutSection::query()->first();
+        $base = rtrim(config('app.url') ?? request()->getSchemeAndHttpHost(), '/');
+        return [
+            'main_image' => $row && $row->main_image
+                ? $base.'/storage/'.ltrim($row->main_image, '/')
+                : null,
+            'overlapping_image' => $row && $row->overlapping_image
+                ? $base.'/storage/'.ltrim($row->overlapping_image, '/')
+                : null,
+        ];
+    }
+
+    /**
+     * @return array{main_image: string|null, overlapping_image: string|null}
+     */
+    private function getHealthSection(): array
+    {
+        $row = HealthSection::query()->first();
         $base = rtrim(config('app.url') ?? request()->getSchemeAndHttpHost(), '/');
         return [
             'main_image' => $row && $row->main_image

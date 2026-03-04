@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\ConveningCommitteeMemberController;
 use App\Http\Controllers\Api\DownloadController;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\GalleryPhotoController;
+use App\Http\Controllers\Api\HealthSectionController;
 use App\Http\Controllers\Api\HeroSlideController;
 use App\Http\Controllers\Api\HomepageController;
 use App\Http\Controllers\Api\HonorBoardEntryController;
@@ -171,6 +172,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/about-section', [AboutSectionController::class, 'show']);
     Route::put('/about-section', [AboutSectionController::class, 'update']);
     Route::post('/about-section', [AboutSectionController::class, 'update']);
+
+    // Health section images (super admin only)
+    Route::get('/health-section', [HealthSectionController::class, 'show']);
+    Route::post('/health-section', [HealthSectionController::class, 'update']);
 
     // Homepage hero slider (super admin only)
     Route::get('/hero-slides', [HeroSlideController::class, 'index']);
