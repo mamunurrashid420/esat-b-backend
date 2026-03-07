@@ -116,6 +116,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Member management routes (super admin only)
     Route::get('/members', [UserController::class, 'index']);
+    Route::post('/members', [UserController::class, 'store']);
     Route::get('/members/{user}', [UserController::class, 'show']);
     Route::put('/members/{user}', [UserController::class, 'update']);
     Route::put('/members/{user}/profile', [UserController::class, 'updateMemberProfileForMember']);

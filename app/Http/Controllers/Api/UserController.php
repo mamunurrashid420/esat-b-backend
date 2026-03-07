@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\RenewMembershipRequest;
+use App\Http\Requests\Api\StoreMemberRequest;
 use App\Http\Requests\Api\UpdateExecutivePhotoRequest;
 use App\Http\Requests\Api\UpdateMemberProfileRequest;
 use App\Http\Requests\Api\UpdateMemberRequest;
@@ -13,6 +14,7 @@ use App\Http\Resources\Api\UserResource;
 use App\Models\MemberProfile;
 use App\Models\User;
 use App\Notifications\MembershipApprovedSms;
+use App\PrimaryMemberType;
 use App\UserRole;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -143,6 +145,47 @@ class UserController extends Controller
         $members = $query->latest()->paginate($perPage);
 
         return UserResource::collection($members)->response();
+    }
+
+    /**
+     * Create a new member (super admin only). Manual add from admin dashboard.
+     */
+    public function store(StoreMemberRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+        $primaryType = PrimaryMemberType::from($data['primary_member_type']);
+        $sscYear = isset($data['ssc_year']) ? (int) $data['ssc_year'] : null;
+        $jscYear = isset($data['jsc_year']) ? (int) $data['jsc_year'] : null;
+
+        $memberId = User::generateMemberId($primaryType, $sscYear, $jscYear);
+        $password = (string) random_int(10000000, 99999999);
+
+        $user = User::create([
+            'name' => $data['name'],
+            'email' => $data['email'] ?? null,
+            'phone' => $data['phone'],
+            'password' => Hash::make($password),
+            'role' => UserRole::Member,
+            'primary_member_type' => $primaryType,
+            'member_id' => $memberId,
+        ]);
+
+        MemberProfile::create(['user_id' => $user->id]);
+
+        if ($primaryType !== PrimaryMemberType::Lifetime) {
+            $expiresAt = User::computeMembershipExpiresAt(now(), 1);
+            if ($expiresAt) {
+                $user->update(['membership_expires_at' => $expiresAt]);
+            }
+        }
+
+        if ($user->phone) {
+            $user->notify(new MembershipApprovedSms($password, $memberId));
+        }
+
+        $user->load(['secondaryMemberType', 'memberProfile']);
+
+        return (new UserResource($user))->response()->setStatusCode(201);
     }
 
     /**
