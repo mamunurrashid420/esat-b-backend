@@ -4,7 +4,6 @@ namespace App\Http\Resources\Api;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Storage;
 
 class MemberProfileResource extends JsonResource
 {
@@ -15,6 +14,8 @@ class MemberProfileResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $base = rtrim(config('app.url') ?? $request->getSchemeAndHttpHost(), '/');
+
         return [
             'id' => $this->id,
             'name_bangla' => $this->name_bangla,
@@ -31,8 +32,8 @@ class MemberProfileResource extends JsonResource
             'institute_name' => $this->institute_name,
             't_shirt_size' => $this->t_shirt_size,
             'blood_group' => $this->blood_group,
-            'photo' => $this->photo ? Storage::disk('public')->url($this->photo) : null,
-            'signature' => $this->signature ? Storage::disk('public')->url($this->signature) : null,
+            'photo' => $this->photo ? $base.'/storage/'.ltrim($this->photo, '/') : null,
+            'signature' => $this->signature ? $base.'/storage/'.ltrim($this->signature, '/') : null,
             'created_at' => $this->created_at->toIso8601String(),
             'updated_at' => $this->updated_at->toIso8601String(),
         ];

@@ -125,6 +125,10 @@ class UserController extends Controller
             $query->where('primary_member_type', $request->primary_member_type);
         }
 
+        if ($request->boolean('executive_only')) {
+            $query->whereNotNull('secondary_member_type_id');
+        }
+
         if ($request->boolean('blood_donors')) {
             $query->whereHas('memberProfile', function ($q) use ($request) {
                 $q->whereNotNull('blood_group')->where('blood_group', '!=', '');
