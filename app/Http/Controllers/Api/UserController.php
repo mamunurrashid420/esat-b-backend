@@ -200,7 +200,6 @@ class UserController extends Controller
         $phoneBefore = $user->phone;
         $user->update($validated);
         $phoneChanged = $phoneBefore !== $user->phone;
-
         $user->load('secondaryMemberType');
         $response = (new UserResource($user))->response();
         $data = $response->getData(true);

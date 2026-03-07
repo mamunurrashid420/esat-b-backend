@@ -156,6 +156,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/about/honor-board', [HonorBoardEntryController::class, 'store']);
     Route::get('/about/honor-board/{honorBoardEntry}', [HonorBoardEntryController::class, 'show']);
     Route::put('/about/honor-board/{honorBoardEntry}', [HonorBoardEntryController::class, 'update']);
+    Route::post('/about/honor-board/{honorBoardEntry}', [HonorBoardEntryController::class, 'update']);
     Route::delete('/about/honor-board/{honorBoardEntry}', [HonorBoardEntryController::class, 'destroy']);
 
     Route::post('/about/batch-representatives', [BatchRepresentativeController::class, 'store']);

@@ -54,6 +54,7 @@ class UpdateMemberRequest extends FormRequest
                 'size:11',
                 Rule::unique('users', 'phone')->ignore($member->id),
             ],
+            'secondary_member_type_id' => ['nullable', 'integer', 'exists:member_types,id'],
         ];
     }
 }

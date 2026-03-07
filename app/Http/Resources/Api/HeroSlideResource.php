@@ -4,7 +4,6 @@ namespace App\Http\Resources\Api;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Storage;
 
 class HeroSlideResource extends JsonResource
 {
@@ -15,9 +14,14 @@ class HeroSlideResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $base = rtrim(config('app.url') ?? $request->getSchemeAndHttpHost(), '/');
+        $imageUrl = $this->image
+            ? $base.'/storage/'.ltrim($this->image, '/')
+            : null;
+
         return [
             'id' => $this->id,
-            'image' => $this->image ? Storage::disk('public')->url($this->image) : null,
+            'image' => $imageUrl,
             'title' => $this->title,
             'subtitle' => $this->subtitle,
             'description' => $this->description,
