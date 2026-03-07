@@ -4,7 +4,6 @@ namespace App\Http\Resources\Api;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Storage;
 
 class NewsResource extends JsonResource
 {
@@ -15,13 +14,15 @@ class NewsResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $base = rtrim(config('app.url') ?? $request->getSchemeAndHttpHost(), '/');
+        $imageUrl = $this->image ? $base.'/storage/'.ltrim($this->image, '/') : null;
         return [
             'id' => $this->id,
             'slug' => $this->slug,
             'title' => $this->title,
             'description' => $this->description,
             'body' => $this->body,
-            'image' => $this->image ? Storage::disk('public')->url($this->image) : null,
+            'image' => $imageUrl,
             'author' => $this->author,
             'published_at' => $this->published_at?->toIso8601String(),
             'is_published' => $this->is_published,

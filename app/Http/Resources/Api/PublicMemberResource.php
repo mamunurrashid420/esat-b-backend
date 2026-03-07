@@ -4,7 +4,6 @@ namespace App\Http\Resources\Api;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Storage;
 
 class PublicMemberResource extends JsonResource
 {
@@ -19,8 +18,9 @@ class PublicMemberResource extends JsonResource
             ? $this->getRelation('memberProfile')
             : null;
 
+        $base = rtrim(config('app.url') ?? $request->getSchemeAndHttpHost(), '/');
         $photoPath = $memberProfile?->photo;
-        $photoUrl = $photoPath ? Storage::disk('public')->url($photoPath) : null;
+        $photoUrl = $photoPath ? $base.'/storage/'.ltrim($photoPath, '/') : null;
 
         $secondaryType = $this->relationLoaded('secondaryMemberType')
             ? $this->getRelation('secondaryMemberType')

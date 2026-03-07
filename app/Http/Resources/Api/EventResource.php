@@ -4,7 +4,6 @@ namespace App\Http\Resources\Api;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Storage;
 
 class EventResource extends JsonResource
 {
@@ -15,6 +14,8 @@ class EventResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $base = rtrim(config('app.url') ?? $request->getSchemeAndHttpHost(), '/');
+        $coverUrl = $this->cover_photo ? $base.'/storage/'.ltrim($this->cover_photo, '/') : null;
         return [
             'id' => $this->id,
             'title' => $this->title,
@@ -25,7 +26,7 @@ class EventResource extends JsonResource
             'registration_opens_at' => $this->registration_opens_at->toIso8601String(),
             'registration_closes_at' => $this->registration_closes_at->toIso8601String(),
             'status' => $this->status?->value,
-            'cover_photo' => $this->cover_photo ? Storage::disk('public')->url($this->cover_photo) : null,
+            'cover_photo' => $coverUrl,
             'fee' => $this->fee !== null ? (float) $this->fee : null,
             'photos' => EventPhotoResource::collection($this->whenLoaded('photos')),
             'registration_count' => $this->whenCounted('registrations'),
