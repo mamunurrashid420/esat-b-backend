@@ -35,6 +35,7 @@ class MemberProfile extends Model
         't_shirt_size',
         'blood_group',
         'photo',
+        'executive_photo',
         'signature',
     ];
 

@@ -119,6 +119,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/members/{user}', [UserController::class, 'show']);
     Route::put('/members/{user}', [UserController::class, 'update']);
     Route::put('/members/{user}/profile', [UserController::class, 'updateMemberProfileForMember']);
+    Route::post('/members/{user}/executive-photo', [UserController::class, 'updateExecutivePhoto']);
     Route::post('/members/{user}/resend-sms', [UserController::class, 'resendSms']);
     Route::post('/members/{user}/renew-membership', [UserController::class, 'renewMembership']);
     Route::post('/members/{user}/disable', [UserController::class, 'disable']);

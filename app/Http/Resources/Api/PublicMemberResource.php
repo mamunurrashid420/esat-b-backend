@@ -19,7 +19,9 @@ class PublicMemberResource extends JsonResource
             : null;
 
         $base = rtrim(config('app.url') ?? $request->getSchemeAndHttpHost(), '/');
-        $photoPath = $memberProfile?->photo;
+        $executivePath = $memberProfile?->executive_photo;
+        $profilePath = $memberProfile?->photo;
+        $photoPath = $executivePath ?: $profilePath;
         $photoUrl = $photoPath ? $base.'/storage/'.ltrim($photoPath, '/') : null;
 
         $secondaryType = $this->relationLoaded('secondaryMemberType')

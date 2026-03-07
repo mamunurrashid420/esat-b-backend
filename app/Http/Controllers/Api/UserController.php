@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\RenewMembershipRequest;
+use App\Http\Requests\Api\UpdateExecutivePhotoRequest;
 use App\Http\Requests\Api\UpdateMemberProfileRequest;
 use App\Http\Requests\Api\UpdateMemberRequest;
 use App\Http\Requests\Api\UpdateProfileRequest;
@@ -182,6 +183,38 @@ class UserController extends Controller
         }
 
         $user->memberProfile->update($request->validated());
+        $user->load(['secondaryMemberType', 'memberProfile']);
+
+        return (new UserResource($user))->response();
+    }
+
+    /**
+     * Upload or replace the executive display photo for a member. Super admin only.
+     * Used on the public Executive Members page. Creates member profile if missing.
+     */
+    public function updateExecutivePhoto(UpdateExecutivePhotoRequest $request, User $user): JsonResponse
+    {
+        if (! $user->isMember()) {
+            abort(404, 'Member not found.');
+        }
+
+        $user->load('memberProfile');
+
+        if (! $user->memberProfile) {
+            $user->memberProfile()->create(['user_id' => $user->id]);
+            $user->load('memberProfile');
+        }
+
+        $profile = $user->memberProfile;
+        if ($profile->executive_photo) {
+            Storage::disk('public')->delete($profile->executive_photo);
+        }
+
+        $file = $request->file('photo');
+        $ext = $file->getClientOriginalExtension() ?: 'jpg';
+        $filename = 'executive_'.Str::random(20).'.'.$ext;
+        $path = $file->storeAs(MemberProfile::STORAGE_DIR.'/'.$user->id, $filename, 'public');
+        $profile->update(['executive_photo' => $path]);
         $user->load(['secondaryMemberType', 'memberProfile']);
 
         return (new UserResource($user))->response();

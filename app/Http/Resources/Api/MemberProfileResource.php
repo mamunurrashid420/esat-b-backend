@@ -33,6 +33,7 @@ class MemberProfileResource extends JsonResource
             't_shirt_size' => $this->t_shirt_size,
             'blood_group' => $this->blood_group,
             'photo' => $this->photo ? $base.'/storage/'.ltrim($this->photo, '/') : null,
+            'executive_photo' => $this->executive_photo ? $base.'/storage/'.ltrim($this->executive_photo, '/') : null,
             'signature' => $this->signature ? $base.'/storage/'.ltrim($this->signature, '/') : null,
             'created_at' => $this->created_at->toIso8601String(),
             'updated_at' => $this->updated_at->toIso8601String(),
