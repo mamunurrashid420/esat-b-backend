@@ -341,6 +341,7 @@ class UserController extends Controller
         $user->update([
             'membership_expires_at' => $newExpiresAt,
             'membership_renewed_at' => now(),
+            'disabled_at' => null, // Re-enable if they were auto-disabled due to expiry
         ]);
         $user->load(['secondaryMemberType', 'memberProfile']);
 

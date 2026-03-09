@@ -23,7 +23,7 @@ class StoreHeroSlideRequest extends FormRequest
     {
         return [
             'image' => ['required', 'file', 'mimes:jpg,jpeg,png', 'max:5120'],
-            'title' => ['required', 'string', 'max:255'],
+            'title' => ['nullable', 'string', 'max:255'],
             'subtitle' => ['nullable', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:2000'],
             'primary_button_label' => ['nullable', 'string', 'max:100'],

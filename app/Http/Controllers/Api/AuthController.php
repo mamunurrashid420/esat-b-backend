@@ -68,6 +68,18 @@ class AuthController extends Controller
             ]);
         }
 
+        // Auto-disable and block login if membership duration has expired (GENERAL/ASSOCIATE)
+        if ($user->role === UserRole::Member && $user->primary_member_type !== PrimaryMemberType::Lifetime) {
+            $expiresAt = $user->getMembershipExpiresAt();
+            if ($expiresAt && $expiresAt->isPast()) {
+                $user->update(['disabled_at' => now()]);
+                $user->tokens()->delete();
+                throw ValidationException::withMessages([
+                    'email_or_phone' => ['Your membership has expired. Please contact the association to renew.'],
+                ]);
+            }
+        }
+
         $user->load([
             'secondaryMemberType',
             'memberProfile',
